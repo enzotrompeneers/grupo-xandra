@@ -1,0 +1,13 @@
+@mixin font-size($size) {
+    font-size: $size + px;
+    font-size: $size / 16 + em;
+    font-size: $size / 16 + rem;
+}
+
+@mixin background-url($img) {
+    background: url($img) no-repeat center bottom; 
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+}

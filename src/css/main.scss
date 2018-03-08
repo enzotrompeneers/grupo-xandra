@@ -1,0 +1,262 @@
+.grid-container {
+    width: $s-large;
+    padding-left: 40px;
+}
+
+.header {
+    box-shadow: 0px 3px 3px 0px rgba(46, 46, 46, 0.05);
+    height: 111px;
+    
+    img {
+        width: 261px;
+        height: 61px;
+        margin: 25px 0;
+    }
+
+    p {
+        color: #888888;
+        @include font-size(16);
+        font-weight: 400;
+        line-height: 111px;
+        text-align: right;
+        
+        a {
+            color:  #2b4098;
+            @include font-size(28);
+            font-weight: 700;
+            line-height: 26px;
+            padding-left: 20px;
+
+            &:hover {
+                color: darken(#2b4098, 5)
+            }
+        }
+    }
+}
+
+.hero-slider {
+    h1 {
+        color:  #010066;
+        font-weight: 700;
+        line-height: 24px;
+        padding: 50px 0 35px 0;
+    }
+
+    .con-blue {
+        background-color: #295a83;
+
+        h2 {
+            color: $c-white;
+            font-weight: 700;
+            line-height: 48px;
+            padding: 35px 0;
+        }
+    }
+
+    .con-img {
+        @include background-url("../graphics/boats.jpg");
+        height: 354px;
+        padding: 40px 0;
+
+        .grid-container {
+            padding-left: 0;
+
+            .overlay {
+                background-color:  #3f729c;
+                width: 770px;
+                height: 272px;
+                position: relative;
+    
+                img {
+                    position: absolute;
+                    bottom: 0;
+                    left: 15px;
+                }
+    
+                p {
+                    color: $c-white;
+                    @include font-size(24);
+                    font-weight: 600;
+                    line-height: 32px;
+                    position: absolute;
+                    top: 40px;
+                    right: 53px;
+                    left: 212px;
+                    bottom: 40px;
+                }
+            }
+        }        
+    }
+}
+
+.content {
+    .grid-container {
+        padding: 65px 0 50px 0;
+
+        .content-text {
+            padding: 0 40px;
+
+            p {
+                color:  #353535;
+                @include font-size(18);
+                font-weight: 400;
+                line-height: 26px;
+                padding-bottom: 50px;
+            }
+    
+            .btn-info {
+                border-radius: 3px;
+                background-color:  #8bac42;
+                color:  $c-white;
+                @include font-size(20);
+                font-weight: 600;
+                font-style: italic;
+                text-align: center;
+                padding: 27px;
+    
+                &:hover {
+                    background-color: darken(#8bac42, 5)
+                }
+            }
+        }
+
+        .con-orange {
+            border-radius: 2px;
+            background-color:  #e28421;
+            padding: 30px;
+
+            .padding-left {
+                padding-left: 4px
+            }
+
+            .padding-right {
+                padding-right: 4px;
+            }
+
+            h3 {
+                color:  $c-white;
+                font-weight: 700;
+                line-height: 26px;
+                padding-bottom: 20px;
+                text-transform: uppercase;
+            }
+
+            input {
+                border: none;
+                border-radius: 2px;
+                
+                &::placeholder {
+                    color:  #404040;
+                    @include font-size(16);
+                    font-weight: 400;
+                    line-height: 24px;
+                    text-transform: uppercase;
+                }
+            }
+
+
+            .btn-submit {
+                width: 100%;
+                color:  $c-white;
+                @include font-size(16);
+                font-weight: 900;
+                line-height: 24px;
+                text-align: center;
+                background-color:  #404040;
+                padding: 12px 0;
+                text-transform: uppercase;
+
+                &:hover {
+                    background-color: darken(#404040, 5)
+                }
+            }
+        }
+
+        .con-grey {
+            margin-top: 13px;
+            border-radius: 2px;
+            background-color:  #f0f0f0;
+            padding: 30px;
+
+            a {
+                color:  #353535;
+                @include font-size(18);
+                font-weight: 700;
+                line-height: 26px;
+
+                &:hover {
+                    color: darken(#353535, 5)
+                }
+            }
+
+            p {
+                color:  #353535;
+                @include font-size(16);
+                font-weight: 400;
+                line-height: 24px;
+            }
+        }
+    }
+}
+
+.article-footer {
+    background-color: #f6f6f6;
+    
+    .grid-container {
+        padding-top: 40px;
+        padding-bottom: 55px;
+
+        .info {
+            &:before {
+                background-image: url("../graphics/info-icon.png");
+                width: 54px;
+                height: 54px;
+                content: ' ';
+				float: left;
+            }
+
+            a {
+                padding-left: 20px;
+                color:  #2b4198;
+                @include font-size(20);
+                font-weight: 600;
+                font-style: italic;
+                line-height: 26px;
+
+                &:hover {
+                    background-color: darken(#2b4198, 5)
+                }
+            }
+    
+            p {
+                padding-left: 74px;
+                color:  #252525;
+                @include font-size(20);
+                font-style: italic;
+                line-height: 26px;
+            }
+        }
+
+        ul {
+            li {
+                &:after {
+                    content: ", ";
+                }
+
+                a {
+                    color:  #252525;
+                    @include font-size(16);
+                    font-weight: 400;
+                    line-height: 26px;
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
+}
+
+.footer {
+    .grid-container {
+        padding: 30px 0 25px 40px;
+    }
+}

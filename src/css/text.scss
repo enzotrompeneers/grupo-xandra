@@ -1,0 +1,28 @@
+body {
+    background: $c-white;
+    font-family: $f-primary;
+}
+
+h1, h2, h3 {
+    margin: 0px;
+}
+
+h1 {
+    @include font-size($s-h1);
+}
+
+h2 {
+    @include font-size($s-h2);
+}
+
+h3 {
+    @include font-size($s-h3);
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    float: left;
+}

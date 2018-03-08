@@ -1,2 +1,1 @@
-# grupo-xandra
-grupo xandra
+# Grupo Xandra
