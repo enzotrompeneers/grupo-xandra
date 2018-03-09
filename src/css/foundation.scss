@@ -2967,6 +2967,13 @@ select {
 
 .is-invalid-input:not(:focus) {
   background-color: #f9ecea;
+  border: 1px solid red;
+  color: red;
+}
+
+.is-invalid-input {
+  border: 3px solid red;
+  color: red;
 }
 
 .is-invalid-label {
