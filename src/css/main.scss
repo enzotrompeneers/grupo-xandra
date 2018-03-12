@@ -6,6 +6,14 @@
 .header {
     box-shadow: 0px 3px 3px 0px rgba(46, 46, 46, 0.05);
     height: 111px;
+
+    .myleft {
+        float: left;
+    }
+
+    .myright{
+        float: right;
+    }
     
     img {
         width: 261px;
@@ -15,9 +23,9 @@
 
     p {
         color: #888888;
-        @include font-size(16);
+        @include font-size(20);
         font-weight: 400;
-        line-height: 111px;
+        line-height: 95px;
         text-align: right;
         
         a {
@@ -268,40 +276,38 @@
     width: 100%;
     bottom: 0;
 
-    div {
+    .flex-box {
+        display: flex;
+
         p {
+            margin-left: 70px;
             @include font-size(20);
             font-weight: 600;
             line-height: 26px;
             text-align: center;
             color: $c-white;
-            padding: 20px 70px;
-            margin-left: 0px;
-            overflow:auto;
-            display:block;
-            //background: yellow;
+            padding: 20px;
         }
-    }
-
-
     
+        .arrow-down {
+            width: 100px;
+            top: calc(50% - 20px);
+            position: relative;
+            margin-right: 70px;
 
-    .arrow-down {
-        border-radius: 50%;
-        background-color:  #444444;
-        width: 40px;
-        height: 40px;
-
-        float: right;
-        clear: both;
-
-        a {
-            &:after {
-                background-image: url("../graphics/arrow-down.svg");
-                width: 40px;
-                height: 40px;
-                content: ' ';
-                display: block;
+            border-radius: 50%;
+            background-color:  #444444;
+            width: 40px;
+            height: 40px;
+    
+            a {
+                &:after {
+                    background-image: url("../graphics/arrow-down.svg");
+                    width: 40px;
+                    height: 40px;
+                    content: ' ';
+                    display: block;
+                }
             }
         }
     }
