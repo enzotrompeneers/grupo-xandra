@@ -1,0 +1,30 @@
+db:
+  mode: development
+  xname: xandra
+  mysql:
+    development:
+      hostname: localhost
+      database: xandra_landing
+      username: root
+      password:
+    staging:
+      hostname: localhost
+      database: xandra_landing
+      username: root
+      password: 
+    production:
+      hostname: localhost
+      database: xandra_landing
+      username: root
+      password: 
+app:
+  locales:
+  - en
+  - es
+  - nl
+  default_locale: en
+mail:
+  host: mail.creativos.be
+  port: 25
+  user: relay@creativos.be
+  pass: vivero2008

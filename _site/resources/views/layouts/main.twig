@@ -1,0 +1,17 @@
+
+
+<!DOCTYPE html>
+<html dir="ltr" lang="nl">
+<head>
+	{% include 'includes/meta.twig' %}
+	<link rel="stylesheet" href="{{ baseUrl }}/css/main.css" />
+	{% block css %}{% endblock %}
+</head>
+
+<body>
+	{% include 'includes/header.twig' %}
+	{% block content %}{% endblock %}
+	{% include 'includes/footer.twig' %}
+	<script src="{{ baseUrl }}/js/bundle.js"></script>
+</body>
+</html>

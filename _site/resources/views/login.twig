@@ -1,0 +1,67 @@
+{% extends 'layouts/api.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+	<div class="m-grid__item m-grid__item--fluid m-wrapper">
+		<div class="m-content">
+			<div class="row">
+				<div class="col-xl-12">
+					<!--begin::Portlet-->
+					<div class="m-portlet">
+						<div class="m-portlet__head">
+							<div class="m-portlet__head-caption">
+								<div class="m-portlet__head-title">
+									<h3 class="m-portlet__head-text">
+										Login
+									</h3>
+								</div>
+							</div>
+						</div>
+						<div class="m-portlet__body">
+							<form action="{{ path_for('api.login') }}" method="post">
+								<div class="form-group m-form__group row">
+									<label for="User" class="col-form-label col-12 col-sm-3">
+										User
+									</label>
+									<div class="input-group col-12 col-sm-9 col-xl-4">
+										<input id="user" type="text" class="form-control m-input" name="user" placeholder="{{ trans('usuario') }}" aria-describedby="basic-addon2">
+										<span class="input-group-addon" id="basic-addon2">
+											<i class="la la-user"></i>
+										</span>
+									</div>
+								</div>
+
+								<div class="form-group m-form__group row">
+									<label for="password" class="col-form-label col-12 col-sm-3">
+										Password
+									</label>
+									<div class="input-group col-12 col-sm-9 col-xl-4">
+										<input id="password" type="password" class="form-control m-input" name="password" placeholder="{{ trans('clave') }}" aria-describedby="basic-addon2">
+										<span class="input-group-addon" id="basic-addon2">
+											<i class="la la-key"></i>
+										</span>
+									</div>
+								</div>
+
+								<div class="m-form__actions m-form__actions">
+									<div class="row">
+										<div class="col-lg-9 ml-lg-auto">
+											<button type="submit" class="btn btn-success guardar">
+												Login
+											</button>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+					<!--end::Portlet-->
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %} <script type="text/javascript"></script>{% endblock %}

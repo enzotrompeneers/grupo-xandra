@@ -1,0 +1,17 @@
+.main-nav {
+	
+	background: #111;
+	
+}
+
+.hero-body {
+	
+	background-image: -webkit-linear-gradient(left, #583188 0%, #c92062 100%);
+	background-image: -o-linear-gradient(left, #583188 0%, #c92062 100%);
+	background-image: linear-gradient(to right, #583188 0%, #c92062 100%);
+	background-repeat: repeat-x
+
+	
+}
+
+.hero-body, .section { padding-left: 0; padding-right: 0; }

@@ -1,0 +1,4 @@
+echo off
+title: PHP Documentor
+call phpdoc run -d . -t ../resources/xml --template="XML" --visibility="public"
+echo Sorted

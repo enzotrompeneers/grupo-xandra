@@ -1,0 +1,12 @@
+{% extends 'layouts/main.twig' %}
+
+{% block title %}{{ page.title }}{% endblock %}
+{% block h1 %}{{ page.title }}{% endblock %}
+
+{% block content %}
+
+    {{ page.text | raw }}
+
+{% endblock %}
+
+{% block scripts %} <script type="text/javascript"></script>{% endblock %}

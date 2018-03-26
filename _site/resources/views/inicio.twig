@@ -1,0 +1,132 @@
+{% extends 'layouts/main.twig' %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}    	
+	<main>
+		<section class="hero-slider">
+			<div class="grid-container">
+				<h1>Brandverzekering in Spanje</h1>
+			</div>
+
+			<div class="con-blue">
+				<div class="grid-container">
+					<h2>Wat dekt mijn brand - Opstal - Inboedelverzekering in Spanje?</h2>
+				</div>
+			</div>
+
+			<div class="con-img">
+				<div class="grid-container">
+					<div class="overlay">
+						<img src="{{ baseUrl }}/graphics/sandra.png" alt="sandra">
+						<p>
+							Heel dikwijls vragen onze klanten: moet ik een aparte wettelijke 
+							aansprakelijkheidsverzekering (familiale verzekering) afsluiten 
+							in Spanje? Ben ik ook gedekt tegen rampen? Zijn mijn juwelen 
+							automatisch meeverzekerd? Waar moet ik verblijven na een zware 
+							brand in mijn woning...? 
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		<section class="content">
+			<div class="grid-container">
+				<div class="grid-x">
+					<div class="cell large-8 content-text">
+						<p>
+							Ik heb regelmatig gesprekken met experts (dus onafhankelijke experts
+							die in opdracht van alle verzekeringsmaatschappijen of klanten werken). 
+							Zij berekenen/gaan na of de klant wel of niet recht heeft op vergoeding 
+							en op welk bedrag ze recht hebben. Wat zij steeds herhalen is het volgende: 
+							in principe bestaan er geen echte slechte maatschappijen, maar wat veel 
+							te veel gebeurt is dat de polis slecht is opgemaakt. Gevolg: de maatschappij 
+							kan niet uitbetalen, want ze hebben de corresponderende premie niet ontvangen. 
+							Daar ligt de taak van de agent of adviseur. Sinds de aanvang van de crisis 
+							wil iedereen de goedkoopste premie betalen, maar weet dat goedkoop niet 
+							steeds beter koop is. 
+						</p>
+
+						<a class="btn-info" href="http://www.grupoxandra.eu/nl/verzekeringen/zurich-particulieren/brand-opstal-inboedel-19.html">
+							Meer informatie? Bezoek onze website?
+						</a>
+					</div>
+
+
+					<div class="cell large-4 content-form">
+						<form class="con-orange" id="contact-form" action="#" method="get" data-abide novalidate>
+							<h3>Prijsopgave aanvragen brand-opstal-inboedel verzekering</h3>
+
+							<div class="grid-x">
+								<div class="cell small-6 padding-right">
+									<input name="naam" type="text" placeholder="naam" required pattern="[a-zA-Z\s]+">
+								</div>
+								<div class="cell small-6 padding-left">
+									<input name="familienaam" type="text" placeholder="familie naam" required pattern="[a-zA-Z\s]+">
+								</div>
+								<div class="cell">
+									<input name="email" type="text" placeholder="email adres" required pattern="email">
+								</div>
+								<div class="cell">
+									<input name="telefoon" type="text" placeholder="telefoon nummer" required pattern="number">
+								</div>
+								<div class="cell">
+									<input name="woonplaats" type="text" placeholder="woonplaats" required pattern="[a-zA-Z\s]+">
+								</div>
+								<div class="cell">
+									<input class="btn-submit" type="submit" value="Ontvang uw gratis prijsopgave">
+									<!-- google recaptcha -->
+								</div>
+							</div>
+						</form>
+
+						<div class="con-grey">
+							<a href="www.grupoxandra.eu/nl/">Grupo Xandra verzekeringen</a>
+							<p>
+								De allerbeste verzekeringen van DKV &amp; Zurich in Spanje, expertise op maat én persoonlijke service in eigen taal.
+							</p>
+						</div>
+
+						
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="article-footer">
+			<div class="grid-container">
+					<div class="grid-x">
+						<div class="cell">
+							<div class="info">
+								<a href="www.grupoxandra.eu/nl/">Grupo Xandra Verzekeringen</a>
+								<p>Een kantoor dat advies biedt over alle soorten verzekeringen in gans Spanje.</p>
+							</div>
+
+							<ul>
+								<li><a href="#">Woningverzekering</a></li>
+								<li><a href="#">autoverzekering</a></li>
+								<li><a href="#">ziektekosten verzekering</a></li>
+								<li><a href="#">levensverzekering</a></li>
+								<li><a href="#">bedrijven en particulieren</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+		</section>
+
+		<section class="fixed-footer">
+			<div class="flex-box">
+				<p>
+					Heeft u vragen over onze brand-opstal-inboedel verzekering of wenst u vrijblijvend een prijsopgave te ontvangen?
+				</p>
+				
+				<div class="arrow-down">
+					<a href="#contact-form"></a>
+				</div>
+			</div>
+		</section>
+  </main>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
