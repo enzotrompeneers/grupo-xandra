@@ -10,42 +10,51 @@
 
 namespace Brunelencantado\Calendar;
 
+use Brunelencantado\Database\DbInterface;
 
 class ReservationCost
 {
 
 	const MINIMUM_STAY = 4;
+	const MAXIMUM_STAY = 28;
 
-	public		$id;
-	public 		$data;
-	protected 	$db;
+	protected $id;
+	protected $data;
+	protected $db;
 
-	public 		$totalCost = 0;
-	public 		$rentCost = 0;
-	public 		$extrasCost = 0;
-	public		$depositCost = 250;
-	public		$allCorrect;
-	public		$fecha_llegada;
-	public		$fecha_salida;
-	public		$hora_llegada;
-	public		$hora_salida;
-	public		$personas;
-	public		$bebes;
-	public		$animales;
+	public $totalCost = 0;
+	public $rentCost = 0;
+	public $extrasCost = 0;
+	public $depositCost = 250;
+	public $allCorrect;
+	public $error;
+
+	protected $fecha_llegada;
+	protected $fecha_salida;
+	protected $hora_llegada;
+	protected $hora_salida;
+	protected $personas;
+	protected $adultos;
+	protected $ninos;
+	protected $bebes;
+	protected $animales;
 	
-	public		$extras = array();
+	protected $extras = [];
+	protected $totalDays;
+	protected $totalPrices;
 	
-	public 		$totalDays;
-	protected 	$totalPrices;
-	
-	public		$error;
 
 
-	// Constructor
-	public function __construct($data, $db){
+	/**
+	 * @brief Constructor
+	 *
+	 * @param Array $data
+	 * @param DbInterface $db
+	 */
+	public function __construct(array $data, DbInterface $db){
 		
 		
-		$this->data = $data;
+		$this->data = filter_var_array($data, FILTER_SANITIZE_STRING);;
 		$this->db = $db;
 		$this->id = $data['id'];
 	
@@ -53,16 +62,17 @@ class ReservationCost
 		$this->fecha_salida		= $data['fecha_salida'];
 		$this->hora_llegada		= $data['hora_llegada'];
 		$this->hora_salida		= $data['hora_salida'];
-		$this->personas			= $data['adultos'] + $data['ninos'];
-		$this->bebes			= $data['bebes'];
+		$this->adultos			= $data['adultos']; // + $data['ninos'];
+		$this->ninos			= $data['ninos']; // + $data['ninos'];
+		$this->bebes			= $data['bebes']; // + $data['ninos'];
+		$this->personas			= $data['adultos'] + $data['ninos'] + $data['bebes'];
+		// $this->bebes			= $data['bebes'];
 
-
-		
 		// Need to validate dates
 		if (!$this->validateDate($this->fecha_llegada) || !$this->validateDate($this->fecha_salida) || !is_numeric($this->personas)) {
 			$this->error =  trad('error_incorrecto');
 		}
-
+	
 		if (!$this->correctSequence()) {
 			$this->error =  trad('error_incorrecto');
 		}
@@ -72,6 +82,7 @@ class ReservationCost
 			$this->getData(); 		// Process data	and get basic rental price
 			$this->rentCost			= (is_array($this->totalPrices))?ceil(array_sum($this->totalPrices)):0;
 			$this->depositCost		= $this->getDeposit(); // Deposit 
+
 			$this->totalCost		= $this->rentCost; // rental cost
 			// $this->outOfHours();	// Out of hours extra?
 			$this->extrasCost		= $this->calculateExtras(); // Get extras cost
@@ -80,7 +91,11 @@ class ReservationCost
 		
 	}
 
-	// Sets the sequence in action
+	/**
+	 * @brief Sets the sequence in action
+	 *
+	 * @return Void
+	 */
 	protected function getData(){
 		
 		// Get dates as an array
@@ -94,9 +109,15 @@ class ReservationCost
 
 		}
 
+		// Maximum stay
+		if ($this->totalDays > self::MAXIMUM_STAY) {
+
+			$this->error =  trad('error_estancia_maxima');
+
+		}
 
 		// Walk through dates to get prices
-		foreach ($dateArray as $k => $v) {
+		foreach ($dateArray as $v) {
 
 			if (!$this->dateAvailable($this->isoDate($v, '/'))) {
 
@@ -104,22 +125,26 @@ class ReservationCost
 
 			}
 
-			$season					= $this->getSeason($this->isoDate($v,'/'));
+			$season	= $this->getSeason($this->isoDate($v, '/'));
 			$season = ($season == 'autumn_season' || $season == 'spring_season') ? 'mid_season' : $season;
 			
-			$prices					= $this->getDayPrices($this->isoDate($v, '/'));
-			$specialPrice			= $this->getSpecialPrice($this->isoDate($v, '/'));
+			$prices	= $this->getDayPrices($this->isoDate($v, '/'));
+			$specialPrice = $this->getSpecialPrice($this->isoDate($v, '/'));
 			
-			$weekPrice				= $prices[$season];
-			$weekPrice				= ($specialPrice) ? $specialPrice : $weekPrice;
+			$weekPrice = $prices[$season];
+			$weekPrice = ($specialPrice) ? $specialPrice : $weekPrice;
 
-			$dayPrice				= $weekPrice / 7;
-			$this->totalPrices[]	= $dayPrice;
+			$dayPrice = $weekPrice / 7;
+			$this->totalPrices[] = $dayPrice;
 		}
 	
 	}
 
-	// Make sure departure later than arrival
+	/**
+	 * @brief Make sure departure later than arrival
+	 *
+	 * @return Boolean
+	 */
 	protected function correctSequence() {
 
 		$dateFromObject		= \DateTime::createFromFormat('d/m/Y', $this->fecha_llegada);
@@ -134,7 +159,12 @@ class ReservationCost
 		return true;
 	}
 	
-	// Make sure valid dates and not in past
+	/**
+	 * @brief Make sure valid dates and not in past
+	 *
+	 * @param String $date
+	 * @return String
+	 */
 	protected function validateDate($date) {
 
 		$d 			= \DateTime::createFromFormat('d/m/Y', $date);
@@ -152,7 +182,13 @@ class ReservationCost
 		return $d->format('d/m/Y') . $date;
 	}
 	
-	// Get date array
+	/**
+	 * @brief Get date array
+	 *
+	 * @param String $outputFormat
+	 * @param String $step
+	 * @return Array
+	 */
 	protected function dateRange($outputFormat = 'Y-m-d', $step = '+1 day') {
 		$dates 		= array();
 		$current 	= strtotime(str_replace('/', '-', $this->fecha_llegada));
@@ -168,16 +204,26 @@ class ReservationCost
 
 
 
-	// Get season from date
+	/**
+	 * @brief Get season from date
+	 *
+	 * @param String $date
+	 * @return String
+	 */
 	protected function getSeason($date) {
-		global $xname, $language;
-		// $date			= $this->isoDate($date,'/');
-		$query			= "SELECT clave FROM {$xname}_temporadas WHERE '{$date}' BETWEEN fecha_comienzo AND fecha_fin";
-		$sql			= record($query);
+
+		$query = "SELECT clave FROM ".XNAME."_temporadas WHERE '{$date}' BETWEEN fecha_comienzo AND fecha_fin";
+		$sql = record($query);
 		return $sql['clave'];
+
 	}
 	
-	// Get daily price for each day
+	/**
+	 * @brief Get daily price for each day
+	 *
+	 * @param String $date
+	 * @return Array
+	 */
 	protected function getDayPrices($date) {
 		global $xname,$language;
 		$season							= $this->getSeason($date);
@@ -194,7 +240,12 @@ class ReservationCost
 		return $response;
 	}
 	
-	// Get special season price if applies
+	/**
+	 * @brief Get special season price if applies
+	 *
+	 * @param String $date
+	 * @return Integer
+	 */
 	protected function getSpecialPrice($date)
 	{
 
@@ -217,18 +268,16 @@ class ReservationCost
 
 		}
 
-
-
-
-
-
 	}
 
-	// Get deposit for this property
+	/**
+	 * @brief Get deposit for this property
+	 *
+	 * @return Integer
+	 */
 	protected function getDeposit()
 	{
-		global $xname;
-		$query = "SELECT deposito FROM {$xname}_viviendas WHERE id = {$this->id}";
+		$query = "SELECT deposito FROM ".XNAME."_viviendas WHERE id = {$this->id}";
 		$sql = record($query);
 
 		$deposito = ($sql['deposito']) ? $sql['deposito'] : $this->depositCost;
@@ -236,7 +285,11 @@ class ReservationCost
 		return $deposito;
 	}
 	
-	// Calculate extras
+	/**
+	 * @brief Calculate extras
+	 *
+	 * @return Array
+	 */
 	protected function calculateExtras()
 	{
 		
@@ -245,7 +298,7 @@ class ReservationCost
 		$extrasInfo = $this->getExtrasInfo();
 
 		$extrasTotal = 0;
-		
+
 		foreach ($selectedExtras as $key => $extra){
 
 			$extraCost = $extrasCosts[$extra];
@@ -259,19 +312,20 @@ class ReservationCost
 			if ($thisExtra['por_persona'] == 1) $extraCost = $extraCost * $this->personas;
 			if ($thisExtra['por_bebe'] == 1) $extraCost = $extraCost * $this->bebes;
 			if ($thisExtra['por_animal'] == 1) $extraCost = $extraCost * $this->animales;
-
 			
-			$extrasTotal += $extraCost;
+			$extrasTotal += round($extraCost);
 	
 		}
 
 		return $extrasTotal;
 		
-		
-
 	}
 
-	// Get extras from post
+	/**
+	 * @brief Get extras from post
+	 *
+	 * @return Array
+	 */
 	protected function getAllExtras()
 	{
 
@@ -296,7 +350,11 @@ class ReservationCost
 		
 	}
 
-	// Get array for all extras costs
+	/**
+	 * @brief Get array for all extras costs
+	 *
+	 * @return Array
+	 */
 	protected function getExtrasCostsThisProperty()
 	{
 
@@ -304,17 +362,22 @@ class ReservationCost
 		$costSql = $this->db->record($costQuery);
 		$oCosts = json_decode($costSql['extras_json']);
 		$aCosts = [];
-		foreach($oCosts as $cost) {
 
-			$aCosts[$cost->id] = $cost->value;
-
+		if ($oCosts) {
+			foreach($oCosts as $cost) {
+				$aCosts[$cost->id] = $cost->value;
+			}
 		}
 
 		return ($aCosts);
 
 	}
 
-	// Get extras type
+	/**
+	 * @brief Get extras type
+	 *
+	 * @return Array
+	 */
 	protected function getExtrasInfo()
 	{
 
@@ -333,22 +396,17 @@ class ReservationCost
 
 	}
 	
-	// Air conditioning cost
-	protected static function getAirCost($id)
-	{
-		global $xname;
-		$query = "SELECT precio_aire_acondicionado FROM {$xname}_viviendas WHERE id = {$id}";
-		$sql = record($query);
-		return $sql['precio_aire_acondicionado'];
-	}
-	
-	// Is date available?
+	/**
+	 * @brief Is date available?
+	 *
+	 * @param String $date ISO format
+	 * @return Boolean
+	 */
 	protected function dateAvailable($date)
 	{
-		global $xname;
 		$query = "	SELECT vivienda_id 
-					FROM {$xname}_reservas  
-					WHERE '{$date}' BETWEEN fecha_llegada AND fecha_salida 
+					FROM ".XNAME."_reservas  
+					WHERE '{$date}' > fecha_llegada AND '{$date}' < fecha_salida 
 					AND vivienda_id = {$this->id} 
 					AND confirmado = 1 
 				";
@@ -359,7 +417,11 @@ class ReservationCost
 
 	}
 	
-	// Do we have an extras cost?
+	/**
+	 * @brief Do we have an extras cost?
+	 *
+	 * @return Void
+	 */
 	protected function outOfHours()
 	{
 		// validate times
@@ -376,38 +438,63 @@ class ReservationCost
 		$checkOut->setTime($aCheckOut[0], $aCheckOut[1]);
 		
 		// Limit times
-		$checkInLimit 	= new \DateTime();
-		$aCheckInLimit 	= explode(':', webconfig('check_in_limit'));
-		$checkInLimit->setTime($aCheckInLimit[0], $aCheckInLimit[1]);
-		$checkOutLimit 	= new \DateTime();
-		$aCheckOutLimit = explode(':', webconfig('check_out_limit'));
-		$checkOutLimit->setTime($aCheckOutLimit[0], $aCheckOutLimit[1]);
+
+		// Checkin limits
+		$checkInLowerLimit 	= new \DateTime();
+		$aCheckInLowerLimit = explode(':', webconfig('check_in_lower_limit'));
+		$checkInLowerLimit->setTime($aCheckInLowerLimit[0], $aCheckInLowerLimit[1]);
+		$checkInUpperLimit 	= new \DateTime();
+		$aCheckInUpperLimit = explode(':', webconfig('check_in_upper_limit'));
+		$checkInUpperLimit->setTime($aCheckInUpperLimit[0], $aCheckInUpperLimit[1]);
+
+		// Checkout limits
+		$checkOutLowerLimit 	= new \DateTime();
+		$aCheckOutLowerLimit = explode(':', webconfig('check_out_lower_limit'));
+		$checkOutLowerLimit->setTime($aCheckOutLowerLimit[0], $aCheckOutLowerLimit[1]);
+		$checkOutUpperLimit 	= new \DateTime();
+		$aCheckOutUpperLimit = explode(':', webconfig('check_out_upper_limit'));
+		$checkOutUpperLimit->setTime($aCheckOutUpperLimit[0], $aCheckOutUpperLimit[1]);
 		
 		// Add extra cost if out of hours
-		if ($checkIn >= $checkInLimit) {
-			$this->extras['out_of_hours_checkin'] = webConfig('out_of_hours');
+		if ($checkOut < $checkOutLowerLimit || $checkOut > $checkOutUpperLimit) {
+			$this->error = trad('error_hora_checkout');
 		}
-		if ($checkOut <= $checkOutLimit) {
-			$this->extras['out_of_hours_checkout'] = webConfig('out_of_hours');
+		if ($checkIn > $checkInUpperLimit || $checkIn < $checkInLowerLimit) {
+			$this->error = trad('error_hora_checkin');
 		}
+
 	}
 	
-	// is valid time?
+	/**
+	 * @brief Is valid time?
+	 *
+	 * @param String $time Checks 17:00 format
+	 * @return Boolean
+	 */
 	protected function isTime($time)
 	{
 		if (preg_match("/(2[0-3]|[01][0-9]):([0-5][0-9])/", $time))
 		{
+
 			return true;
+			
 		}
 	}
 
+	/**
+	 * @brief Get date in ISO format
+	 *
+	 * @param String $date
+	 * @param String $delimiter Default is /
+	 * @return String Y-m-d format
+	 */
+	protected function isoDate($date, $delimiter='/') {
 
-
-	// Get date in ISO format
-	public function isoDate($date,$delimiter='/') {
 		$dateArray			= explode($delimiter, $date);
-		$output				= $dateArray[2].'-'.$dateArray[1].'-'.$dateArray[0];
+		$output				= $dateArray[2] . '-' . $dateArray[1] . '-'.$dateArray[0];
+
 		return $output;
+
 	}
 	
 

@@ -71,14 +71,6 @@ var DatatableHtmlTableDemo = function() {
   };
 }();
 
-$("#btn-editar").click(function(e) {
-  e.preventDefault();
-  $("#editar-tabble").css("display", "block");
-  console.log('clicked');
-});
-
-
-
 jQuery(document).ready(function() {
   DatatableHtmlTableDemo.init();
 });

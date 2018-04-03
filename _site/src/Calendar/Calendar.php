@@ -20,19 +20,31 @@ class Calendar
 	
 	protected $calendar = null;
 	
-	
+	/**
+	 * Constructor
+	 *
+	 * @param \Brunelencantado\Database\MySqliDatabase $db
+	 * @param \Brunelencantado\Logger\Logger $log
+	 */
 	public function __construct(\Brunelencantado\Database\MySqliDatabase $db, \Brunelencantado\Logger\Logger $log)
 	{
 		$this->db = $db;
 		$this->log = $log;
 	}
 	
-	public function renderCalendar($id, $year)
+	/**
+	 * Renders calendar
+	 *
+	 * @param Int $id
+	 * @param Int $year
+	 * @return String Calendarin HTML format
+	 */
+	public function renderCalendar($id, $year, Array $months)
 	{
+		
 		$calendar = ''; // This holds our calendar
 		
 		// fecha en la que nos encontramos
-		$dia 		= date('j');
 		$numMes 	= date('n');
 		$ano	 	= $year;
 		
@@ -43,7 +55,7 @@ class Calendar
 		
 		$reservedDates = $this->getReservedDates($id);
 		if ($reservedDates){
-			foreach ($reservedDates as $k=>$v){
+			foreach ($reservedDates as $k => $v){
 				$arrival 			= $this->convertDate($v['fecha_llegada']);
 				$departure 			= $this->convertDate($v['fecha_salida']);
 				$aFechasRes[] 		= date('dmy', $arrival);
@@ -55,17 +67,17 @@ class Calendar
 				}
 			}
 		}
-		
 		for($i = 0 ; $i < 12; $i++){
 			$mesPrint = mktime(0, 0, 0, $numMes, 1, $ano);
-			$datePrint= getdate($mesPrint);
+			$datePrint = getdate($mesPrint);
 			$diasMes = date( "t", $mesPrint );
-		
+			$month = $months[LANGUAGE][$datePrint['mon'] - 1];
+			
 			$calendar .= '<div  class="month calendar">
-            <table cellspacing="0" summary="Calendar: '.$datePrint["month"] . " " . $datePrint["year"].' ">
+            <table cellspacing="0" summary="Calendar: '. $month . " " . $datePrint["year"].' ">
             	<thead>
                 	<tr>
-                    	<th nowrap="" class="month-label" colspan="7">'. $datePrint["month"] . " " . $datePrint["year"].'</th>
+                    	<th nowrap="" class="month-label" colspan="7">'. $month . " " . $datePrint["year"].'</th>
                     </tr>
                 	<tr>
                 		<th class="day-label"><abbr title="Monday">m</abbr></th>
@@ -99,21 +111,18 @@ class Calendar
 					$calendar .= '<tr>';
 				}
 				
-
-				if ($this->esPasado($diaPrint))						$calendar .= '<td class="diaPasado">'.$j.'</td>';
-				elseif ($this->esReserva($diaPrint, $aFechasRes))		$calendar .= '<td class="u">'.$j.'</td>';
-				elseif ($this->esReserva($diaPrint, $aFechasFinRes))	$calendar .= '<td class="diaSalida">'.$j.'</td>';
-
-				elseif($this->esReserva($diaPrint, $aFechasIniRes)){
-					if($this->esReserva($diaPrint, $aFechasFinRes)) {
-						$calendar .= '<td class="diaDoble">'.$j.'</td>';
-					}	else { 
-						$calendar .= '<td class="diaLlegada">'.$j.'</td>';
-					}
-				} 
-
-				else													$calendar .= '<td class="a">'.$j.'</td>';
-					
+                    if($this->esReserva($diaPrint, $aFechasIniRes)) {
+                         if($this->esReserva($diaPrint, $aFechasFinRes)) {
+                              $calendar .= '<td class="diaDoble">'.$j.'</td>';
+                         } else {
+                              $calendar .= '<td class="diaLlegada">'.$j.'</td>';
+                         }
+                    } 
+                    elseif ($this->esReserva($diaPrint, $aFechasFinRes)) $calendar .= '<td class="diaSalida">'.$j.'</td>'; 
+                    elseif ($this->esReserva($diaPrint, $aFechasRes)) $calendar .= '<td class="u">'.$j.'</td>'; 
+                    elseif ($this->esPasado($diaPrint)) $calendar .= '<td class="diaPasado">'.$j.'</td>'; 
+                    else $calendar .= '<td class="a">'.$j.'</td>';
+				
 				if($diaSem == 0) { //domingo
 					$calendar .= '</tr>';
 				}
@@ -150,7 +159,7 @@ class Calendar
 	protected function getReservedDates($id)
 	{
 		global $xname;
-		$query = " SELECT fecha_llegada, fecha_salida FROM {$xname}_reservas WHERE vivienda_id = $id AND confirmado = 1";
+		$query = "SELECT fecha_llegada, fecha_salida FROM ".XNAME."_reservas WHERE vivienda_id = $id AND confirmado = 1";
 		$sql = $this->db->query($query);
 		return $sql;
 
@@ -178,11 +187,6 @@ class Calendar
 		return false;
 	}	
 }
-
-
-
-
-
 
 
 

@@ -1,0 +1,167 @@
+<div class="m-portlet m-portlet--success m-portlet--head-solid-bg m-portlet--head-sm m-portlet--collapsed" data-portlet="true" id="m_portlet_tools_1">
+    <div class="m-portlet__head">
+        <div class="m-portlet__head-caption">
+            <div class="m-portlet__head-title">
+                <div class="m-portlet__head-tools">
+                    <ul class="m-portlet__nav">
+                        <li class="m-portlet__nav-item">
+                            <a href=""  data-portlet-tool="toggle" class="m-portlet__nav-link m-portlet__nav-link--icon">
+                                <i class="la la-plus"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <h3 class="m-portlet__head-text">
+                    Nueva pagina
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-portlet__body">
+        <!--begin::Form-->
+        <form action="{{ path_for('webadmin.create', { 'language': language }) }}" class="m-form m-form--state m-form--fit m-form--label-align-right" id="nueva-pagina" method="post">
+            <div class="m-portlet__body">
+                <div class="m-form__content">
+                    <div class="m-alert m-alert--icon alert alert-warning m--hide" role="alert" id="m_form_2_msg">
+                        <div class="m-alert__icon">
+                            <i class="la la-warning"></i>
+                        </div>
+                        <div class="m-alert__text">
+                            mensaje de error!
+                        </div>
+                        <div class="m-alert__close">
+                            <button type="button" class="close" data-close="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group m-form__group row">
+                    <label for="dominio" class="col-form-label col-12 col-sm-3">
+                        Dominio
+                    </label>
+                    <div class="input-group col-12 col-sm-9 col-xl-4">
+                        <input id="dominio" type="text" name="dominio" placeholder="dominio" class="form-control m-input" aria-describedby="basic-addon2" required>
+                        <span class="input-group-addon" id="basic-addon2">
+                            <i class="la la-link"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group m-form__group row">
+                    <label for="titulo" class="col-form-label col-12 col-sm-3">
+                        Titulo
+                    </label>
+                    <div class="input-group col-12 col-sm-9 col-xl-4">
+                        <input id="titulo" type="text" class="form-control m-input" name="titulo" placeholder="titulo" aria-describedby="basic-addon2" required>
+                        <span class="input-group-addon" id="basic-addon2">
+                            <i class="la la-info-circle"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group m-form__group row">
+                    <label for="h1" class="col-form-label col-12 col-sm-3">
+                        H1
+                    </label>
+                    <div class="input-group col-12 col-sm-9 col-xl-4">
+                        <input id="h1" type="text" class="form-control m-input" name="h1" placeholder="h1" aria-describedby="basic-addon2" required>
+                        <span class="input-group-addon" id="basic-addon2">
+                            <i class="la la-info-circle"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group m-form__group row">
+                    <label for="subtitulo" class="col-form-label col-12 col-sm-3">
+                        Subtitulo
+                    </label>
+                    <div class="input-group col-12 col-sm-9 col-xl-4">
+                        <input id="subtitulo" type="text" class="form-control m-input" name="subtitulo" placeholder="subtitulo" aria-describedby="basic-addon2" required>
+                        <span class="input-group-addon" id="basic-addon2">
+                            <i class="la la-info-circle"></i>
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="form-group m-form__group row">
+                    <label for="texto-principal" class="col-form-label col-12 col-sm-3">
+                        Texto principal
+                    </label>
+                    <div class="col-12 col-sm-9">
+                        <textarea class="summernote" name="texto" id="texto-principal" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group m-form__group row">
+                    <label for="url" class="col-form-label col-12 col-sm-3">
+                        Url
+                    </label>
+                    <div class="input-group col-12 col-sm-9 col-xl-4">
+                        <input id="url" type="text" class="form-control m-input" name="url" placeholder="url" aria-describedby="basic-addon2" required>
+                        <span class="input-group-addon" id="basic-addon2">
+                            <i class="la la-link"></i>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="form-group m-form__group row">
+                    <label for="titulo-de-cita" class="col-form-label col-12 col-sm-3">
+                        Titulo de cita
+                    </label>
+                    <div class="input-group col-12 col-sm-9 col-xl-4">
+                        <input id="titulo-de-cita" type="text" class="form-control m-input" name="titulo_presupuesto" placeholder="titulo de cita" aria-describedby="basic-addon2" required>
+                        <span class="input-group-addon" id="basic-addon2">
+                            <i class="la la-info-circle"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group m-form__group row">
+                    <label for="cita" class="col-form-label col-12 col-sm-3">
+                        Cita
+                    </label>
+                    <div class="col-12 col-sm-9">
+                        <textarea class="summernote" name="cita_sandra" id="cita" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group m-form__group row">
+                    <label for="meta-descr" class="col-form-label col-12 col-sm-3">
+                        Meta descr
+                    </label>
+                    <div class="col-12 col-sm-9 col-xl-4">
+                        <textarea id="meta-descr" class="form-control m-input" rows="3" name="meta_descr" placeholder="meta descr" required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group m-form__group row">
+                    <label for="meta-key" class="col-form-label col-12 col-sm-3">
+                        Meta key
+                    </label>
+                    <div class="col-12 col-sm-9 col-xl-4">
+                        <textarea id="meta-key" class="form-control m-input" rows="3" name="meta_key" placeholder="meta key" required></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="m-portlet__foot m-portlet__foot--fit">
+                <div class="m-form__actions m-form__actions">
+                    <div class="row">
+                        <div class="col-lg-9 ml-lg-auto">
+                            <button type="submit" class="btn btn-success guardar">
+                                Guardar
+                            </button>
+                            <button type="reset" class="btn btn-secondary">
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--end::Form-->
+    </div>
+</div>

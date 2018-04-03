@@ -10,9 +10,9 @@ $app->get('/{language}/logout/', ['\App\Controllers\Api\LoginController', 'logou
 $app->group('/webadmin/{language}', function() {
 
 	$this->get('/', ['\App\Controllers\Api\WebadminController', 'index'])->setName('webadmin.default');
-	
+	$this->post('/create', ['\App\Controllers\Api\WebadminController', 'create'])->setName('webadmin.create');
+	$this->get('/edit/{id}', ['\App\Controllers\Api\WebadminController', 'edit'])->setName('webadmin.edit');
+	$this->post('/update/{id}', ['\App\Controllers\Api\WebadminController', 'update'])->setName('webadmin.update');
+	$this->get('/delete/{id}', ['\App\Controllers\Api\WebadminController', 'delete'])->setName('webadmin.delete');
 	
 })->add(new App\Middleware\LoginMiddleware($container));
-
-
-

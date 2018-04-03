@@ -4,9 +4,9 @@ db:
   mysql:
     development:
       hostname: localhost
-      database: xandra_landing
+      database: grupoxandra_webdb
       username: root
-      password:
+      password: root
     staging:
       hostname: localhost
       database: xandra_landing

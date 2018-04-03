@@ -2,93 +2,85 @@
 /**
  * Rental booking class
  *
- * @author Daniel Beard <daniel@brunel-encantado.com>
+ * @author Daniel Beard <daniel@creativos.be>
  *
  */
 
 namespace Brunelencantado\Calendar;
 
+use Brunelencantado\Database\DbInterface;
 
 class Booking {
 	
-	protected 		$id;
-	protected		$reservationCost;
-	protected		$propertyRef;
-	protected		$extras;
+	protected $db;
+	protected $propertyRef;
+	protected $extras;
 
-	public			$clientDetails;
-	public			$db;
-
-	protected		$error = [];
+	protected $table = 'reservas';
+	protected $error = [];
 	
-	public function __construct($id, ReservationCost $reservationCost, array $clientDetails, $db){
+	/**
+	 * @brief Constructor
+	 *
+	 * @param DbInterface $db
+	 */
+	public function __construct(DbInterface $db){
 
-		$this->id					= $id;
-		$this->reservationCost		= $reservationCost;
-		$this->clientDetails		= $clientDetails;
-		$this->db					= $db;
+		$this->db = $db;
 
 	}
 	
-	public function validate() {
-		// Error handling
+	/**
+	 * @brief Saves booking to database
+	 *
+	 * @param Array $data
+	 * @param Integer $clientId
+	 * @return Integer New booking id
+	 */
+	public function save(array $data, $clientId, $reservationId = null)
+	{
+
+		$data = filter_var_array($data, FILTER_SANITIZE_STRING);
+
+		$booking = [];
+		$booking['cliente_id'] = $clientId;
+		$booking['vivienda_id'] = $data['id'];
+		$booking['fecha_llegada'] = $this->isoDate($data['fecha_llegada']);
+		$booking['fecha_salida'] = $this->isoDate($data['fecha_salida']);
+		$booking['hora_llegada'] = $data['hora_llegada'];
+		$booking['hora_salida'] = $data['hora_salida'];
+		$booking['adultos'] = $data['adultos'];
+		$booking['ninos'] = $data['ninos'];
+		$booking['bebes'] = $data['bebes'];
+		$booking['personas'] = $data['adultos'] + $data['ninos'] + $data['bebes'];
+
+		$booking['fecha_creado'] = date('Y-m-d');
+		$booking['fecha_modificado'] = date('Y-m-d');
+		$booking['ip'] = $_SERVER['REMOTE_ADDR'];
+		$booking['hash'] = md5(uniqid(mt_rand(), true));
+		$booking['confirmado'] = 0;
+
+		$booking['coste_alquiler'] = $data['coste_alquiler'];
+		$booking['coste_extras'] = $data['coste_extras'];
+		$booking['deposito'] = $data['deposito'];
+		$booking['total'] = $booking['coste_alquiler'] + $booking['coste_extras'];
+
+		$booking['mensaje'] = $data['mensaje'];
+		$booking['extras'] = $this->getExtras($data);
+
+		$booking['confirmado'] = (isset($data['confirmado']) && $data['confirmado'] == true) ? 1 : 0;
 		
-		if (empty($this->clientDetails['nombre'])) 				{	$this->error['nombre']			= trad('introduzca_nombre'); }
-		if (empty($this->clientDetails['apellido'])) 			{	$this->error['apellido']		= trad('introduzca_apellido'); }
-		// if (empty($this->clientDetails['identificacion'])) 	{	$this->error['identificacion']	= trad('introduzca_identificacion'); }
-		if (empty($this->clientDetails['direccion'])) 			{	$this->error['direccion']		= trad('introduzca_direccion'); }
-		if (empty($this->clientDetails['codigo_postal'])) 		{	$this->error['codigo_postal']	= trad('introduzca_codigo_postal'); }
-		if (empty($this->clientDetails['localidad'])) 			{	$this->error['localidad']		= trad('introduzca_localidad'); }
-		if (empty($this->clientDetails['pais'])) 				{	$this->error['pais']			= trad('introduzca_pais'); }
-		if (!valid_email($this->clientDetails['email'])) 		{	$this->error['email']			= trad('introduzca_email'); }
-		if (empty($this->clientDetails['telefono'])) 			{	$this->error['telefono']		= trad('introduzca_telefono'); }
-		// if (empty($this->clientDetails['condiciones'])) 		{	$this->error['condiciones']		= trad('acepte_condiciones'); }
-		
-		if ($this->error) return false;
-			
-		return true;
+		if ($reservationId) return  $this->db->updateQuery($booking, XNAME . '_' . $this->table, ['id' => $reservationId]);
+
+		return $this->db->insertQuery($booking, XNAME . '_' . $this->table);
 
 	}
-	
-	public function insert() {
 
-		// Insert data into database
-		$insert							= array();
-		
-		// Client data
-		$insert['nombre']				= $this->clientDetails['nombre'];
-		$insert['apellido']				= $this->clientDetails['apellido'];
-		$insert['identificacion']		= $this->clientDetails['identificacion'];
-		$insert['direccion']			= $this->clientDetails['direccion']."\n".$this->clientDetails['codigo_postal'] . "\n" . 
-										  $this->clientDetails['localidad']."\n".$this->clientDetails['pais'] . "\n";
-		$insert['email']				= $this->clientDetails['email'];
-		$insert['telefono']				= $this->clientDetails['telefono'];
-		$insert['mensaje']				= $this->clientDetails['mensaje'];
-		
-		// Reservation data
-		$insert['vivienda_id']			= $this->reservationCost->id;
-		$insert['fecha_llegada']		= $this->reservationCost->isoDate($this->reservationCost->fecha_llegada);
-		$insert['fecha_salida']			= $this->reservationCost->isoDate($this->reservationCost->fecha_salida);
-		$insert['hora_llegada']			= $this->reservationCost->hora_llegada;
-		$insert['hora_salida']			= $this->reservationCost->hora_salida;
-		$insert['personas']				= $this->reservationCost->personas;
-		$insert['extras']				= ($this->reservationCost->extras) ? implode(', ', $this->reservationCost->extras) : null;
-		$insert['coste_alquiler']		= $this->reservationCost->rentCost;
-		$insert['coste_extras']			= $this->reservationCost->extrasCost;
-		$insert['total']				= $this->reservationCost->totalCost; 
-		
-		// Meta data
-		$insert['fecha']				= date('Y-m-d');
-		$insert['ip']					= $_SERVER['REMOTE_ADDR'];
-		$insert['hash']					= md5(uniqid(mt_rand(), true));
-		$insert['confirmado']			= 0;
-		
-		// Plop it into the database
-		$this->db->insertQuery($insert, XNAME . '_reservas');
-
-	}
-	
-	// Returns errors in json format
+	/**
+	 * @brief Returns errors in json format
+	 *
+	 * @return JSON
+	 */
 	public function jsonErrors()
 	{
 
@@ -103,91 +95,15 @@ class Booking {
 
 	}
 	
-	public function sendEmails($mailVariables, $data) {
+	/**
+	 * @brief Gets property reference from id
+	 *
+	 * @param Integer $id
+	 * @return Array
+	 */
+	public function getPropertyRef($id) {
 
-		$mailContent 				= mail_content('booking');
-		$mailOptions 				= array();
-		$mailOptions['to'] 			= $this->clientDetails['email'];
-		$mailOptions['variables'] 	= $mailVariables;
-		$mailOptions['asunto'] 		= $mailContent['asunto'];
-		$mailOptions['template']	= 'lib/mods/contacto/templates/template_contacto.php';
-		$mailOptions['fromName']	= webConfig('nombre');
-		$mailOptions['from']		= webConfig('email');
-		
-		$mailOptions['ignores'] 	= array('submit', 'code', 'role', 'id', 'reserva', 'condiciones', 'mailing_list');
-
-		// Form data
-		$fullEmail = '<table>';
-		
-		$fullEmail .= $this->setPostData($data, $mailOptions['ignores']);
-
-	
-		
-		// Property data
-		$referencia					= $this->getPropertyRef();
-		$fullEmail 					.= '<tr><td>'.trad('vivienda').':&nbsp;</td><td>'.$referencia.'</td></tr>';
-
-		// Price info
-		$fullEmail 					.= '<tr><td>' . trad('precio_alquiler') . ':&nbsp;</td><td>' . $this->reservationCost->rentCost . ' &euro;</td></tr>';
-		$fullEmail 					.= '<tr><td>' . trad('precio_extras') . ':&nbsp;</td><td>' . $this->reservationCost->extrasCost . ' &euro;</td></tr>';
-		$fullEmail 					.= '<tr><td>' . trad('precio') . ':&nbsp;</td><td>' . $this->reservationCost->totalCost . ' &euro;</td></tr>';
-		$fullEmail 					.= '<tr><td>' . trad('deposit') . ':&nbsp;</td><td>' . $this->reservationCost->depositCost . ' &euro;</td></tr>';
-		
-		$fullEmail 					.= '</table>';
-		$nombre						= $this->clientDetails['nombre'] . ' ' . $this->clientDetails['apellido'];
-		$message 					= str_replace('%%NOMBRE%%', $nombre, $mailContent['mensaje']);
-		
-		$mailOptions['mensaje'] 	= $message . $fullEmail;
-		$mailOptions['embeddeds'] 	= array('mailheader' => 'images/logo.png'); 
-		// printout($mailOptions);
-		
-		// Send client email
-		if (send_mail($mailOptions)){
-
-			// Send owner email
-			$mailOptions['asunto'] 		= 'Web booking';
-			$mailOptions['to'] 			= webConfig('email');
-			$mailOptions['fromName']	= $nombre;
-			$mailOptions['from']		= $this->clientDetails['email'];
-
-			send_mail($mailOptions);
-
-			return true;
-
-		} 
-	
-		echo 'Error';
-
-	}
-
-	// Puts POST data into tabole format
-	protected function setPostData($data, $ignores)
-	{
-
-		$setData = '';
-
-		foreach ($data as $k => $v){
-			
-				if(in_array($k, $ignores)) continue;
-				if ($v == '') continue;
-				if ($k == 'formulario') $v = trad($v);
-	
-				$v = ($v == 'on') ? trad('si') : $v;
-	
-				$label = trad($k);
-				$label = ($this->isExtra($k)) ?  $this->getExtraName($k) : $label;
-				
-				$setData .= '<tr><td>' . $label . ':&nbsp;</td><td>' . $v . '</td></tr>';
-	
-			}	
-
-			return $setData;
-
-	}
-
-	protected function getPropertyRef() {
-
-		$query		= "SELECT referencia FROM ".XNAME."_viviendas WHERE id = {$this->reservationCost->id}";
+		$query		= "SELECT referencia FROM ".XNAME."_viviendas WHERE id = {$id}";
 		$sql		= $this->db->record($query);
 		
 		return $sql['referencia'];
@@ -195,10 +111,58 @@ class Booking {
 	}
 
 
+	/**
+	 * @brief Gets list of extra names
+	 *
+	 * @param Array $data
+	 * @return Array
+	 */
+	public function getExtras($data)
+	{
 
+		$extras = '';
+
+		foreach ($data as $k => $v) {
+
+			if ($this->isExtra($k)) {
+
+				// unset($this->data[$k]);
+				$extras .= $this->getExtraName($k) . "\n\r";
+
+			}
+
+		}
+
+		return $extras;
+
+	}
+
+	/**
+	 * @brief gets rid of extras fields
+	 *
+	 * @param Array $data
+	 * @return Array
+	 */
+	public function purgeExtras($data)
+	{
+
+		foreach ($data as $k => $v) {
+
+			if ($this->isExtra($k)) {
+
+				unset($data[$k]);
+				
+			}
+
+		}
+
+		return $data;
+
+	}
 
 	protected function isExtra($name)
 	{
+		
 		if (mb_substr($name, 0, 6, 'utf-8') == 'extra_') return true;
 
 	}
@@ -232,7 +196,28 @@ class Booking {
 		return $this->extras[$extraId];
 
 	}
-	
 
+	// Get date in ISO format
+	protected function isoDate($date, $delimiter='/') {
+
+		$dateArray			= explode($delimiter, $date);
+		$output				= $dateArray[2] . '-' . $dateArray[1] . '-'.$dateArray[0];
+
+		return $output;
+
+	}	
+
+    /**
+     * @brief Table setter
+     *
+     * @param String $table
+     * @return Void
+     */
+    public function setTable($table)
+    {
+
+        $this->table = $table;
+
+    }
 	
 }
