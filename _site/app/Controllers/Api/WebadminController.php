@@ -74,7 +74,6 @@ class WebadminController extends ApiController
 		$data = [];
 		$data['language'] = $language;
 
-		$page = new PaginaHandler($this->db, $language);
 		$input = $request->getParsedBody();
 		
 
@@ -89,7 +88,7 @@ class WebadminController extends ApiController
 		$update['titulo_presupuesto_nl'] = $input['titulo_presupuesto'];
 		$update['meta_descr_nl'] = $input['meta_descr'];
 		$update['meta_key_nl'] = $input['meta_key'];
-		$update['fecha_creado'] = date('Y-m-d');
+		$update['fecha_modificado'] = date('Y-m-d');
 
 		$this->db->updateQuery($update, XNAME.'_paginas', [ 'id' => $id ]);
 
@@ -99,6 +98,10 @@ class WebadminController extends ApiController
 
 	public function delete(Response $response, Router $router, $language, $id)
 	{
+		$data = [];
+		$data['language'] = $language;
+
+		$this->db->deleteQuery(XNAME.'_paginas', $id);
 
 		return $response->withRedirect($router->pathFor('webadmin.default', [ 'language' => $language ]));
 

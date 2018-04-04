@@ -113,9 +113,11 @@ class MySqliDatabase implements DbInterface
     }
 	
 	// Delete query builder
-	public function deleteQuery ()
+	public function deleteQuery ($table, $id)
 	{
-		// TODO
+		$query = 'DELETE FROM ' . $table . ' WHERE id=' . $id;
+
+		$this->query($query);
 	}
 	
 	// Basic query | returns true or error

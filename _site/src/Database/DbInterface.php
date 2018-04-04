@@ -24,7 +24,7 @@ interface DbInterface
 	public function updateQuery(array $update, $table, array $where);
 	
 	// Delete query builder
-	public function deleteQuery ();
+	public function deleteQuery ($table, $id);
 	
 	// Basic query | returns true or error
 	public function query($query);
